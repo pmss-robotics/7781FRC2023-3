@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     double slide = controller.getLeftY();
-    double rotate = controller.getLeftX();
+    double rotate = controller.getLeftX(); // figure out how to do rotate
     
     _backRightMotor.set(ControlMode.PercentOutput, -slide);
     _backLeftMotor.set(ControlMode.PercentOutput, slide);
