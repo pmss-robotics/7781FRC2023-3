@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class Function_Arm {
     // establish motors
     // feb 18 also establishes solenoids and compressor
-    WPI_VictorSPX _armMotor = new WPI_VictorSPX(7);
+    WPI_VictorSPX _leftArmMotor = new WPI_VictorSPX(7);
+    WPI_VictorSPX _rightArmMotor = new WPI_VictorSPX(9);
     WPI_VictorSPX _extendMotor = new WPI_VictorSPX(8);
     DoubleSolenoid _leftSolenoid = new DoubleSolenoid(null, 0, 1);
     DoubleSolenoid _rightSolenoid = new DoubleSolenoid(null, 0, 1);
@@ -25,9 +26,10 @@ public class Function_Arm {
     public void driveSetup() {
 		compressor.enableDigital();
 		/* Set Neutral mode */
-		_armMotor.stopMotor();
-        _armMotor.setInverted(false);
-
+		_leftArmMotor.stopMotor();
+        _leftArmMotor.setInverted(false);
+        _rightArmMotor.stopMotor();
+        _rightArmMotor.setInverted(false);
         _extendMotor.stopMotor();
         _extendMotor.setInverted(false);
         
@@ -42,7 +44,8 @@ public class Function_Arm {
      */
     public void liftPeriodic(double lift, double extend, double open) {
         //Alyn Jul 13, changed parameters of drivePeriodic to fit Mecanum driveCartesian
-        _armMotor.set(lift);
+        _leftArmMotor.set(lift);
+        _rightArmMotor.set(lift);
         _extendMotor.set(extend);
         _leftSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));
         _rightSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));

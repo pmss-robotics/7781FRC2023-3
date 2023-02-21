@@ -144,7 +144,7 @@ public class Robot extends TimedRobot{
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
 		driveTrain.drivePeriodic(backforth, leftright, _gamepad.getAButton()); 
 		intake.grabPeriodic(grab);
-		arm.liftPeriodic(lift, extend, open); //change the 2nd lift to extension later
+		arm.liftPeriodic(lift, extend, open); 
 
 
     }
