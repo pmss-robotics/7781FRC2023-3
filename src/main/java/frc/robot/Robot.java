@@ -56,12 +56,11 @@ import static java.lang.Math.abs;
 import edu.wpi.first.wpilibj.TimedRobot; //import timed robot
 import edu.wpi.first.wpilibj.XboxController;
 
-
 //autonomous period.
-public class Robot extends TimedRobot{
+public class Robot extends TimedRobot {
 
 	long servoTime = System.currentTimeMillis();
-	
+
 	long autonomousTime = System.currentTimeMillis();
 
 	/* DEFINING FUNCTIONS */
@@ -72,54 +71,54 @@ public class Robot extends TimedRobot{
 	XboxController _gamepad = new XboxController(0);
 	int c = 0;
 
-
 	@Override
 	public void autonomousInit() {
 		driveTrain.driveSetup();
 		intake.driveSetup();
 		arm.driveSetup();
-		//intake.spinIn(true);
+		// intake.spinIn(true);
 	}
 
-	@Override 
-	public void autonomousPeriodic(){
+	@Override
+	public void autonomousPeriodic() {
 		System.out.println(c);
-		if(c<150){
-            //Alyn Jul 13, autonomous period, move forward 0.5. x is forward
-            //drivePeriodic(double ySpeed, double xSpeed, double grab)
-            // Feb 15 this is now its own function
+		if (c < 150) {
+			// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
+			// drivePeriodic(double ySpeed, double xSpeed, double grab)
+			// Feb 15 this is now its own function
 			driveTrain.driveAutonomous();
 		}
-		c+=1;
-		//System.out.println((System.currentTimeMillis()-autonomousTime));
-		//intake.spinIn(false);
+		c += 1;
+		// System.out.println((System.currentTimeMillis()-autonomousTime));
+		// intake.spinIn(false);
 	}
 
-    @Override
-    public void teleopPeriodic() {	
-        
+	@Override
+	public void teleopPeriodic() {
+
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
 		// EG. // trough servo
-			//boolean changeIntakeState = _gamepad.getRawButton(1);
-		
+		// boolean changeIntakeState = _gamepad.getRawButton(1);
+
 		// sensitivity control INVERTED ON LIANG'S CONTROLLER
 		// Jul 27 Alyn: ASK BOB WHY USE THIS FORMULA FOR SENSATIVITY
-		//double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
+		// double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
 		double sensitivity = 0.3 * (_gamepad.getAButton() ? 3 : 1);
-        
+
 		/*---- DRIVE ----*/
 		// Going forwards and backwards by tracking joystick position
 
-        double backforth = 1 * _gamepad.getLeftY();
-        // Using deadband so minor joystick movements will not pass through and move the robot
-        backforth = Deadband(backforth);
-		backforth = sensitivity*backforth;
+		double backforth = 1 * _gamepad.getLeftY();
+		// Using deadband so minor joystick movements will not pass through and move the
+		// robot
+		backforth = Deadband(backforth);
+		backforth = sensitivity * backforth;
 
 		// Going left and right by tracking joystick position
 		double leftright = 1 * _gamepad.getLeftX();
 		leftright = Deadband(leftright);
-		leftright = sensitivity*leftright;
+		leftright = sensitivity * leftright;
 
 		// Motor grab by tracking joystick position (bugged and corresponds to RT)
 
@@ -127,33 +126,31 @@ public class Robot extends TimedRobot{
 		int grab_outtake = _gamepad.getRightBumper() ? 1 : 0;
 		int grab = grab_intake - grab_outtake;
 
-		// Motor grab by tracking joystick position (for whatever reason getLeftTriggerAxis is a bit bugged and it corresponds to the controller's right y axis)
+		// Motor grab by tracking joystick position (for whatever reason
+		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
+		// right y axis)
 		double lift = -1 * _gamepad.getLeftTriggerAxis();
 		lift = Deadband(lift);
-		lift = sensitivity*lift;
+		lift = sensitivity * lift;
 		double open = Deadband(_gamepad.getRightTriggerAxis()) * sensitivity;
 
+		double extend = Deadband(_gamepad.getRightY() - _gamepad.getRightX()) * sensitivity;
 
-  		double extend = Deadband(_gamepad.getRightY() - _gamepad.getRightX()) * sensitivity;
+		// TODO: Move to constants file
 
-
-		//TODO: Move to constants file
-
-	
 		// Use driveCartesian (y, x, z) [NOT X, Y, Z] to control robot movement
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
-		driveTrain.drivePeriodic(backforth, leftright, _gamepad.getAButton()); 
+		driveTrain.drivePeriodic(backforth, leftright);
 		intake.grabPeriodic(grab);
-		arm.liftPeriodic(lift, extend, open); 
+		arm.liftPeriodic(lift, extend, open);
 
+	}
 
-    }
-
-    /* UTILITY FUNCTIONS */
+	/* UTILITY FUNCTIONS */
 	/** Deadband 5 percent, used on the gamepad */
 	double Deadband(double value) {
 		// inside deadband
-		if (abs(value) <= 0.05){
+		if (abs(value) <= 0.05) {
 			return 0;
 		}
 		/* Outside deadband */

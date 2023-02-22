@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 // Angus Jan. 31: set up all the motors
 /**
- * Add your docs here.
+ * Add your docs here
  */
 public class Function_Intake {
     // establish motors
