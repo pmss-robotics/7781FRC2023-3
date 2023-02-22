@@ -10,6 +10,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.Constants;
+
 // Angus Jan. 31: set up all the motors
 /**
  * Add your docs here.
@@ -17,9 +19,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class Function_Arm {
     // establish motors
     // feb 18 also establishes solenoids and compressor
-    WPI_VictorSPX _leftArmMotor = new WPI_VictorSPX(7);
-    WPI_VictorSPX _rightArmMotor = new WPI_VictorSPX(9);
-    WPI_VictorSPX _extendMotor = new WPI_VictorSPX(8);
+    WPI_VictorSPX _leftArmMotor = new WPI_VictorSPX(Constants.leftArmMotorPort);
+    WPI_VictorSPX _rightArmMotor = new WPI_VictorSPX(Constants.rightArmMotorPort);
+    WPI_VictorSPX _extendMotor = new WPI_VictorSPX(Constants.extendMotorPort);
     DoubleSolenoid _leftSolenoid = new DoubleSolenoid(null, 0, 1);
     DoubleSolenoid _rightSolenoid = new DoubleSolenoid(null, 0, 1);
     Compressor compressor = new Compressor(null);
@@ -47,7 +49,9 @@ public class Function_Arm {
         _leftArmMotor.set(lift);
         _rightArmMotor.set(lift);
         _extendMotor.set(extend);
-        _leftSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));
-        _rightSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));
+        //Needs explanation
+        Value solenoidValue = open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff);
+        _leftSolenoid.set(solenoidValue);
+        _rightSolenoid.set(solenoidValue);
     }
 }
