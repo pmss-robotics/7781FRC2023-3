@@ -131,6 +131,8 @@ public class Robot extends TimedRobot{
 		double lift = -1 * _gamepad.getLeftTriggerAxis();
 		lift = Deadband(lift);
 		lift = sensitivity*lift;
+		double open = Deadband(_gamepad.getRightTriggerAxis()) * sensitivity;
+
 
   		double extend = Deadband(_gamepad.getRightY() - _gamepad.getRightX()) * sensitivity;
 
@@ -142,7 +144,7 @@ public class Robot extends TimedRobot{
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
 		driveTrain.drivePeriodic(backforth, leftright, _gamepad.getAButton()); 
 		intake.grabPeriodic(grab);
-		arm.liftPeriodic(lift, extend); //change the 2nd lift to extension later
+		arm.liftPeriodic(lift, extend, open); 
 
 
     }

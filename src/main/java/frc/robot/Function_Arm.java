@@ -8,30 +8,33 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 // Angus Jan. 31: set up all the motors
 /**
  * Add your docs here.
  */
 public class Function_Arm {
     // establish motors
-    WPI_VictorSPX _armMotor = new WPI_VictorSPX(7);
+    // feb 18 also establishes solenoids and compressor
+    WPI_VictorSPX _leftArmMotor = new WPI_VictorSPX(7);
+    WPI_VictorSPX _rightArmMotor = new WPI_VictorSPX(9);
     WPI_VictorSPX _extendMotor = new WPI_VictorSPX(8);
+    DoubleSolenoid _leftSolenoid = new DoubleSolenoid(null, 0, 1);
+    DoubleSolenoid _rightSolenoid = new DoubleSolenoid(null, 0, 1);
+    Compressor compressor = new Compressor(null);
     public void driveSetup() {
-		
+		compressor.enableDigital();
 		/* Set Neutral mode */
-		_armMotor.stopMotor();
-        _armMotor.setInverted(false);
-
+		_leftArmMotor.stopMotor();
+        _leftArmMotor.setInverted(false);
+        _rightArmMotor.stopMotor();
+        _rightArmMotor.setInverted(false);
         _extendMotor.stopMotor();
         _extendMotor.setInverted(false);
         
-        //for mecanum, each wheel moves independently.
-        //change setInverted for each direction for stick
-        /* Configure output direction */
-        
-		/*_leftIntakeMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-		_rightIntakeMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward*/
-        
+        _leftSolenoid.set(Value.kOff);
+        _rightSolenoid.set(Value.kOff);
     }
     
     /*
@@ -39,9 +42,12 @@ public class Function_Arm {
      * lift: Positive values move arm up, negative vice versa
      * extend: Positive values bring the arm out, negatice vice versa   
      */
-    public void liftPeriodic(double lift, double extend) {
+    public void liftPeriodic(double lift, double extend, double open) {
         //Alyn Jul 13, changed parameters of drivePeriodic to fit Mecanum driveCartesian
-        _armMotor.set(lift);
+        _leftArmMotor.set(lift);
+        _rightArmMotor.set(lift);
         _extendMotor.set(extend);
+        _leftSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));
+        _rightSolenoid.set(open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff));
     }
 }
