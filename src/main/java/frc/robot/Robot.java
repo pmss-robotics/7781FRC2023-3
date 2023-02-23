@@ -82,7 +82,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		// Periodic functions run 50 times a seconds, following code just runs for 3 secodns
+		// Periodic functions run 50 times a seconds, following code just runs for 3
+		// secodns
 		if (c < 150) {
 			// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
 			// drivePeriodic(double ySpeed, double xSpeed, double grab)
@@ -105,7 +106,7 @@ public class Robot extends TimedRobot {
 		// sensitivity control INVERTED ON LIANG'S CONTROLLER
 		// Jul 27 Alyn: ASK BOB WHY USE THIS FORMULA FOR SENSATIVITY
 		// double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
-		//Holding the "A" button on the remote will increase accel by 3 times!
+		// Holding the "A" button on the remote will increase accel by 3 times!
 		double sensitivity = Constants.driveSensitivity * (_gamepad.getAButton() ? 3 : 1);
 
 		/*---- DRIVE ----*/
@@ -131,25 +132,33 @@ public class Robot extends TimedRobot {
 		// Motor grab by tracking joystick position (for whatever reason
 		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
 		// right y axis)
-		double lift = -1 * _gamepad.getLeftTriggerAxis();
+		double lift = -_gamepad.getLeftTriggerAxis();
 		lift = Deadband(lift);
 		lift = sensitivity * lift;
 		double open = Deadband(_gamepad.getRightTriggerAxis()) * sensitivity;
-
-		double extend = Deadband(_gamepad.getRightY() - _gamepad.getRightX()) * sensitivity;
+		System.out.println(_gamepad.getRightX());
+		System.out.println(_gamepad.getRightY());
+		double extend = Deadband(_gamepad.getRightX());
 
 		// TODO: Move to constants file
 
 		// Use driveCartesian (y, x, z) [NOT X, Y, Z] to control robot movement
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
-		driveTrain.drivePeriodic(backforth, leftright);
+		if (!_gamepad.getBButton()) {
+			driveTrain.drivePeriodic(backforth, leftright);
+		} else {
+			// b button to brake
+			driveTrain.driveBrake();
+		}
+
 		intake.grabPeriodic(grab);
 		arm.liftPeriodic(lift, extend, open);
 
 	}
 
 	/* UTILITY FUNCTIONS */
-	/** Deadband 5 percent, used on the gamepad
+	/**
+	 * Deadband 5 percent, used on the gamepad
 	 * Ignores any input thats less than 5% incase the controller is "drifting"
 	 */
 	double Deadband(double value) {

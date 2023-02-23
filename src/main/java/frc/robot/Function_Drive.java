@@ -48,7 +48,6 @@ public class Function_Drive {
     WPI_TalonSRX _rearRightMotor = new WPI_TalonSRX(Constants.rearRightMotorPort);
     AprilTagDetector detector = new AprilTagDetector();
 
-
     // //attempted to fix
     // // Alyn Jul 13, define driveA.
     // // MUST CHANGE NUMBER ONCE IDed
@@ -84,9 +83,9 @@ public class Function_Drive {
         _frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-       
-       //Play around with this for setting breaks on raiser arm
-        // _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
+
+        // Play around with this for setting breaks on raiser arm
+
     }
 
     public void drivePeriodic(double xSpeed, double zRotation) {
@@ -96,6 +95,14 @@ public class Function_Drive {
         // _driveA.arcadeDrive(xSpeed, 4);
         // _driveA.tankDrive(ySpeed, 20);
         _driveA.arcadeDrive(xSpeed, zRotation, false);
+
+    }
+
+    public void driveBrake() {
+        _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
+        _rearRightMotor.setNeutralMode(NeutralMode.Coast);
+        _frontLeftMotor.setNeutralMode(NeutralMode.Coast);
+        _frontRightMotor.setNeutralMode(NeutralMode.Coast);
 
     }
 
