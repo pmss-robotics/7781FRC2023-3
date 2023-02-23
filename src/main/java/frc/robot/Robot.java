@@ -55,6 +55,7 @@ import static java.lang.Math.abs;
 
 import edu.wpi.first.wpilibj.TimedRobot; //import timed robot
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants;
 
 //autonomous period.
 public class Robot extends TimedRobot {
@@ -68,7 +69,7 @@ public class Robot extends TimedRobot {
 	Function_Intake intake = new Function_Intake();
 	Function_Arm arm = new Function_Arm();
 
-	XboxController _gamepad = new XboxController(0);
+	XboxController _gamepad = new XboxController(Constants.xboxControllerPort);
 	int c = 0;
 
 	@Override
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		System.out.println(c);
+		// Periodic functions run 50 times a seconds, following code just runs for 3 secodns
 		if (c < 150) {
 			// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
 			// drivePeriodic(double ySpeed, double xSpeed, double grab)
@@ -104,7 +105,8 @@ public class Robot extends TimedRobot {
 		// sensitivity control INVERTED ON LIANG'S CONTROLLER
 		// Jul 27 Alyn: ASK BOB WHY USE THIS FORMULA FOR SENSATIVITY
 		// double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
-		double sensitivity = 0.3 * (_gamepad.getAButton() ? 3 : 1);
+		//Holding the "A" button on the remote will increase accel by 3 times!
+		double sensitivity = Constants.driveSensitivity * (_gamepad.getAButton() ? 3 : 1);
 
 		/*---- DRIVE ----*/
 		// Going forwards and backwards by tracking joystick position
@@ -147,7 +149,9 @@ public class Robot extends TimedRobot {
 	}
 
 	/* UTILITY FUNCTIONS */
-	/** Deadband 5 percent, used on the gamepad */
+	/** Deadband 5 percent, used on the gamepad
+	 * Ignores any input thats less than 5% incase the controller is "drifting"
+	 */
 	double Deadband(double value) {
 		// inside deadband
 		if (abs(value) <= 0.05) {

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 // Phoenix library
 
 //import edu.wpi.first.wpilibj.motorcontrol.TalonSRX;
@@ -12,6 +14,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 //Alyn Jul 13, input Mecanum drive
+
+import frc.robot.Constants;
 
 public class Function_Drive {
     /* MOTORS */
@@ -35,14 +39,15 @@ public class Function_Drive {
     // Alyn Jul 13, define driveA.
     // MUST CHANGE NUMBER ONCE IDed
     // Set ID for front left motor as TalonSRX SRX 2
-    WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(2);
+    WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(Constants.frontLeftMotorPort);
     // Set ID for front right motor as TalonSRX SRX 3
-    WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(3);
+    WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(Constants.frontRightMotorPort);
     // Set ID for rear left motor as TalonSRX SPX 1
-    WPI_TalonSRX _rearLeftMotor = new WPI_TalonSRX(1);
+    WPI_TalonSRX _rearLeftMotor = new WPI_TalonSRX(Constants.rearLeftMotorPort);
     // Set ID for rear right motor as TalonSRX SPX 4
-    WPI_TalonSRX _rearRightMotor = new WPI_TalonSRX(4);
+    WPI_TalonSRX _rearRightMotor = new WPI_TalonSRX(Constants.rearRightMotorPort);
     AprilTagDetector detector = new AprilTagDetector();
+
 
     // //attempted to fix
     // // Alyn Jul 13, define driveA.
@@ -79,7 +84,9 @@ public class Function_Drive {
         _frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-
+       
+       //Play around with this for setting breaks on raiser arm
+        // _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
     }
 
     public void drivePeriodic(double xSpeed, double zRotation) {
