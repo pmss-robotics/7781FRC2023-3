@@ -150,10 +150,9 @@ public class Robot extends TimedRobot {
 			// b button to brake
 			driveTrain.driveBrake();
 		}
-
+		intake.grabToggle(_gamepad.getXButtonPressed());
 		intake.grabPeriodic(grab);
 		arm.liftPeriodic(lift, extend, open);
-
 	}
 
 	/* UTILITY FUNCTIONS */

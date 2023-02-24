@@ -14,7 +14,7 @@ public final class Constants {
 
     public static final int leftArmMotorPort = 8;
     public static final int rightArmMotorPort = 9;
-    public static final int extendMotorPort = 5;
+    public static final int extendMotorPort = 7;
 
     public static final int leftSolenoidForwardChannel = 0;
     public static final int leftSolenoidReverseChannel = 1;

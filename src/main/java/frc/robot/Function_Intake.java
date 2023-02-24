@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
  * Add your docs here
  */
 public class Function_Intake {
+    public double speed = 0.3;
     // establish motors
     WPI_VictorSPX _leftIntakeMotor = new WPI_VictorSPX(6);
     WPI_VictorSPX _rightIntakeMotor = new WPI_VictorSPX(5);
@@ -29,7 +30,7 @@ public class Function_Intake {
         // for mecanum, each wheel moves independently.
         // change setInverted for each direction for stick
         /* Configure output direction */
-
+        // changed some random stuff bla bla bla
         /*
          * _leftIntakeMotor.setInverted(false); // <<<<<< Adjust this until robot drives
          * forward when stick is forward
@@ -42,11 +43,13 @@ public class Function_Intake {
     public void grabPeriodic(double grab) {
         // Alyn Jul 13, changed parameters of drivePeriodic to fit Mecanum
         // driveCartesian
-        _leftIntakeMotor.set(0.3);
-        _rightIntakeMotor.set(0.3);
+        _leftIntakeMotor.set(speed);
+        _rightIntakeMotor.set(speed);
     }
 
     public void grabToggle(boolean grab) {
-
+        if (grab) {
+            speed = -speed; // invert speed
+        }
     }
 }
