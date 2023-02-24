@@ -55,6 +55,7 @@ import static java.lang.Math.abs;
 
 import edu.wpi.first.wpilibj.TimedRobot; //import timed robot
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 
 //autonomous period.
@@ -68,12 +69,16 @@ public class Robot extends TimedRobot {
 	Function_Drive driveTrain = new Function_Drive();
 	Function_Intake intake = new Function_Intake();
 	Function_Arm arm = new Function_Arm();
-
+	Timer timer = new Timer();
 	XboxController _gamepad = new XboxController(Constants.xboxControllerPort);
 	int c = 0;
 
 	@Override
 	public void autonomousInit() {
+		autonomousTime = System.currentTimeMillis();
+		timer.stop();
+		timer.reset();
+		timer.start();
 		driveTrain.driveSetup();
 		intake.driveSetup();
 		arm.driveSetup();
@@ -82,15 +87,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		driveTrain.driveAutonomous(timer.get());
 		// Periodic functions run 50 times a seconds, following code just runs for 3
 		// secodns
-		if (c < 150) {
-			// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
-			// drivePeriodic(double ySpeed, double xSpeed, double grab)
-			// Feb 15 this is now its own function
-			driveTrain.driveAutonomous();
-		}
-		c += 1;
+		// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
+		// drivePeriodic(double ySpeed, double xSpeed, double grab)
+		// Feb 15 this is now its own function
+		// xChargePadOffset, yChargePadOffset - meters
+		// rotation - degrees
 		// System.out.println((System.currentTimeMillis()-autonomousTime));
 		// intake.spinIn(false);
 	}
@@ -132,12 +136,10 @@ public class Robot extends TimedRobot {
 		// Motor grab by tracking joystick position (for whatever reason
 		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
 		// right y axis)
-		double lift = -_gamepad.getLeftTriggerAxis();
+		double lift = -_gamepad.getRightY();
 		lift = Deadband(lift);
 		lift = sensitivity * lift;
-		double open = Deadband(_gamepad.getRightTriggerAxis()) * sensitivity;
-		System.out.println(_gamepad.getRightX());
-		System.out.println(_gamepad.getRightY());
+		double open = Deadband(_gamepad.getRightTriggerAxis() - 0.5) * sensitivity;
 		double extend = Deadband(_gamepad.getRightX());
 
 		// TODO: Move to constants file

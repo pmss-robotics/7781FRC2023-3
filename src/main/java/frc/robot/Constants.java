@@ -21,7 +21,17 @@ public final class Constants {
     public static final int rightSolenoidForwardChannel = 2;
     public static final int rightSolenoidReverseChannel = 3;
 
+    public static double initialRotation = 0; // degrees
+    public static double xChargePadOffset = 1; // meters
+    public static double yChargePadOffset = 1; // meters
+
+    // degrees travelled per second @ s = autoSpeed
+    public static final double rotationConstant = 90;
+    // meters travelled per second @ s = autoSpeed
+    public static final double driveConstant = 0.5;
+    public static final double autoSpeed = 0.5;
+    public static String calibrating = "d"; // set to "d" for drive, "r" for rotate, false for regular
     // Robot configs
-    public static final double driveSensitivity = 0.3;
+    public static final double driveSensitivity = 0.7;
 
 }

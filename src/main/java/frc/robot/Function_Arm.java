@@ -32,7 +32,7 @@ public class Function_Arm {
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     public void driveSetup() {
-        compressor.enableDigital();
+        // compressor.enableDigital();
 
         /* Set Neutral mode */
         _leftArmMotor.stopMotor();
