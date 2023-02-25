@@ -32,7 +32,7 @@ public class Function_Arm {
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     public void driveSetup() {
-        // compressor.enableDigital();
+        compressor.enableDigital();
 
         /* Set Neutral mode */
         _leftArmMotor.stopMotor();
@@ -58,6 +58,8 @@ public class Function_Arm {
         _rightArmMotor.set(lift);
         _extendMotor.set(extend);
         // Needs explanation
+        // if open is positive, then solenoids push
+        // if open is negative, then solenoids retract
         Value solenoidValue = open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff);
         _leftSolenoid.set(solenoidValue);
         _rightSolenoid.set(solenoidValue);

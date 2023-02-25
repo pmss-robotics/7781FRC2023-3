@@ -30,7 +30,7 @@ public final class Constants {
     // meters travelled per second @ s = autoSpeed
     public static final double driveConstant = 0.5;
     public static final double autoSpeed = 0.5;
-    public static String calibrating = "d"; // set to "d" for drive, "r" for rotate, false for regular
+    public static String calibrating = "f"; // set to "d" for drive, "r" for rotate, anything else for regular
     // Robot configs
     public static final double driveSensitivity = 0.7;
 
