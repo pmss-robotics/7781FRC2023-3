@@ -103,92 +103,117 @@ public class Function_Drive {
 
     public void driveAutonomous(double time) {
         final double[] command_values = {
+                Constants.offset,
                 Math.signum(Constants.xChargePadOffset)
-                        * -(90 + Math.signum(Constants.xChargePadOffset) * Constants.initialRotation),
-                Math.abs(Constants.xChargePadOffset), Math.signum(Constants.xChargePadOffset) * 90,
-                Constants.yChargePadOffset };
-        final String[] commands = { "r", "d", "r", "d" };
-        if (Constants.calibrating == "d") {
-            if (time <= 15) {
-                _driveA.arcadeDrive(0.5, 0);
-            }
-        } else if (Constants.calibrating == "r") {
-            if (time <= 15) {
-                _driveA.arcadeDrive(0, 0.5);
-            }
-        } else {
-
-            // Constants.xChargePadOffset - how far right the robot is from the charge pad
-            // (negative means it is to the left)
-            // Constants.yChargePadOffset - how far back the robot is from the charge pad
-            // Constants.initialRotation - angle offset from north in degrees (west =
-            // negative, east =
-            // positive)
-            // time - the current tick number (use seconds for # of seconds)
-            double seconds = time;
-            double tsum = 0;
-            for (int i = 0; i < (c + 1); i++) {
-                tsum += Math.abs(command_values[i]
-                        / ((commands[i] == "r") ? Constants.rotationConstant : Constants.driveConstant));
-            }
-            if (seconds < tsum) {
-                _driveA.arcadeDrive((commands[c] == "d" ? (0.5 * Math.signum(command_values[c])) : 0),
-                        (commands[c] == "r" ? (0.5 * Math.signum(command_values[c])) : 0));
-            } else if ((c + 1) < commands.length) {
-                c++;
-            }
-            /*
-             * if (Constants.xChargePadOffset < 0) {
-             * // all of these variables are in terms of seconds
-             * // r variables are Constants.initialRotation actions, d variables are drive
-             * 
-             * final double r1 = (90 - Constants.initialRotation) /
-             * Constants.rotationConstant;
-             * final double d2 = Math.abs(Constants.xChargePadOffset) /
-             * Constants.driveConstant;
-             * final double r3 = 90 / Constants.rotationConstant;
-             * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
-             * 
-             * 
-             * 
-             * 
-             * if (seconds < r1) {
-             * _driveA.arcadeDrive(0, Constants.autoSpeed);
-             * } else if (seconds < r1 + d2) {
-             * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-             * } else if (seconds < r1 + d2 + r3) {
-             * _driveA.arcadeDrive(0, -Constants.autoSpeed);
-             * } else if (seconds < r1 + d2 + r3 + d4) {
-             * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-             * }
-             * 
-             * }
-             * else if (Constants.xChargePadOffset > 0) {
-             * // all of these variables are in terms of seconds
-             * // r variables are Constants.initialRotation actions, d variables are drive
-             * final double r1 = (90 + Constants.initialRotation) /
-             * Constants.rotationConstant;
-             * final double d2 = Math.abs(Constants.xChargePadOffset) /
-             * Constants.driveConstant;
-             * final double r3 = 90 / Constants.rotationConstant;
-             * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
-             * if (seconds < r1) {
-             * _driveA.arcadeDrive(0, -Constants.autoSpeed);
-             * } else if (seconds < r1 + d2) {
-             * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-             * } else if (seconds < r1 + d2 + r3) {
-             * _driveA.arcadeDrive(0, Constants.autoSpeed);
-             * } else if (seconds < r1 + d2 + r3 + d4) {
-             * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-             * }
-             * } else {
-             * final double d1 = Constants.yChargePadOffset / Constants.driveConstant;
-             * if (seconds < d1) {
-             * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-             * }
-             * }
-             */
+                        * (90 + Math.signum(Constants.xChargePadOffset) * Constants.initialRotation),
+                Math.abs(Constants.xChargePadOffset), Math.signum(Constants.xChargePadOffset) * -90,
+                Constants.yChargePadOffset, 3 };
+        final String[] commands = { "w", "r", "d", "r", "d", "d" };
+        switch (Constants.calibrating) {
+            case "d":
+                if (time <= Constants.caliseconds) {
+                    _driveA.arcadeDrive(Constants.autoSpeed, 0);
+                }
+                break;
+            case "r":
+                if (time <= Constants.caliseconds) {
+                    _driveA.arcadeDrive(0, Constants.autoSpeed);
+                }
+                break;
+            default:
+                double seconds = time;
+                double tsum = 0;
+                for (int i = 0; i < (c + 1); i++) {
+                    tsum += Math.abs(command_values[i]
+                            / ((commands[i] == "r") ? Constants.rotationConstant
+                                    : ((commands[i] == "d") ? Constants.driveConstant : 1)));
+                }
+                if (seconds < tsum) {
+                    _driveA.arcadeDrive((commands[c] == "d" ? (0.5 * Math.signum(command_values[c])) : 0),
+                            (commands[c] == "r" ? (0.5 * Math.signum(command_values[c])) : 0));
+                } else if ((c + 1) < commands.length) {
+                    c++;
+                }
+                break;
         }
+        /*
+         * {
+         * 
+         * // Constants.xChargePadOffset - how far right the robot is from the charge
+         * pad
+         * // (negative means it is to the left)
+         * // Constants.yChargePadOffset - how far back the robot is from the charge pad
+         * // Constants.initialRotation - angle offset from north in degrees (west =
+         * // negative, east =
+         * // positive)
+         * // time - the current tick number (use seconds for # of seconds)
+         * double seconds = time;
+         * double tsum = 0;
+         * for (int i = 0; i < (c + 1); i++) {
+         * tsum += Math.abs(command_values[i]
+         * / ((commands[i] == "r") ? Constants.rotationConstant
+         * : ((commands[i] == "d") ? Constants.driveConstant : 1)));
+         * }
+         * if (seconds < tsum) {
+         * _driveA.arcadeDrive((commands[c] == "d" ? (0.5 *
+         * Math.signum(command_values[c])) : 0),
+         * (commands[c] == "r" ? (0.5 * Math.signum(command_values[c])) : 0));
+         * } else if ((c + 1) < commands.length) {
+         * c++;
+         * }
+         * /*
+         * if (Constants.xChargePadOffset < 0) {
+         * // all of these variables are in terms of seconds
+         * // r variables are Constants.initialRotation actions, d variables are drive
+         * 
+         * final double r1 = (90 - Constants.initialRotation) /
+         * Constants.rotationConstant;
+         * final double d2 = Math.abs(Constants.xChargePadOffset) /
+         * Constants.driveConstant;
+         * final double r3 = 90 / Constants.rotationConstant;
+         * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
+         * 
+         * 
+         * 
+         * 
+         * if (seconds < r1) {
+         * _driveA.arcadeDrive(0, Constants.autoSpeed);
+         * } else if (seconds < r1 + d2) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * } else if (seconds < r1 + d2 + r3) {
+         * _driveA.arcadeDrive(0, -Constants.autoSpeed);
+         * } else if (seconds < r1 + d2 + r3 + d4) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * }
+         * 
+         * }
+         * else if (Constants.xChargePadOffset > 0) {
+         * // all of these variables are in terms of seconds
+         * // r variables are Constants.initialRotation actions, d variables are drive
+         * final double r1 = (90 + Constants.initialRotation) /
+         * Constants.rotationConstant;
+         * final double d2 = Math.abs(Constants.xChargePadOffset) /
+         * Constants.driveConstant;
+         * final double r3 = 90 / Constants.rotationConstant;
+         * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
+         * if (seconds < r1) {
+         * _driveA.arcadeDrive(0, -Constants.autoSpeed);
+         * } else if (seconds < r1 + d2) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * } else if (seconds < r1 + d2 + r3) {
+         * _driveA.arcadeDrive(0, Constants.autoSpeed);
+         * } else if (seconds < r1 + d2 + r3 + d4) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * }
+         * } else {
+         * final double d1 = Constants.yChargePadOffset / Constants.driveConstant;
+         * if (seconds < d1) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * }
+         * }
+         * 
+         * }
+         */
         /*
          * If you want to do limelight
          * NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");

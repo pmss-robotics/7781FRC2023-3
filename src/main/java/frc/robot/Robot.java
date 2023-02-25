@@ -56,7 +56,6 @@ import static java.lang.Math.abs;
 import edu.wpi.first.wpilibj.TimedRobot; //import timed robot
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
 
 //autonomous period.
 public class Robot extends TimedRobot {
