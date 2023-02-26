@@ -34,6 +34,6 @@ public final class Constants {
     public static double initialRotation = 0; // degrees
     public static double xChargePadOffset = -1; // meters
     public static double yChargePadOffset = 1; // meters
-    public static final double offset = 2; // how many seconds after the start should autonomous begin?
+    public static final double offset = 0; // how many seconds after the start should autonomous begin?
 
 }
