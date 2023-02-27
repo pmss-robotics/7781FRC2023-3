@@ -136,10 +136,11 @@ public class Robot extends TimedRobot {
 		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
 		// right y axis)
 		double lift = -_gamepad.getRightY();
+		System.out.println(_gamepad.getRightY());
 		lift = Deadband(lift);
-		lift = sensitivity * lift;
+		lift = Constants.armLiftSensitivity * lift;
 		double open = Deadband(_gamepad.getRightTriggerAxis() - 0.5) * sensitivity;
-		double extend = Deadband(_gamepad.getRightX());
+		double extend = Deadband(_gamepad.getRightX()) * Constants.armExtendSensitivity;
 
 		// TODO: Move to constants file
 
