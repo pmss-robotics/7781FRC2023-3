@@ -30,6 +30,9 @@ public final class Constants {
     public static String calibrating = "f"; // set to "d" for drive, "r" for rotate, anything else for regular
     // Robot configs
     public static final double driveSensitivity = 0.7;
+    public static final double armLiftSensitivity = 0.5;
+    public static final double armExtendSensitivity = 1;
+
     public static final int caliseconds = 5;
     public static double initialRotation = 0; // degrees
     public static double xChargePadOffset = -1; // meters
