@@ -107,8 +107,8 @@ public class Function_Drive {
                 Math.signum(Constants.xChargePadOffset)
                         * (90 + Math.signum(Constants.xChargePadOffset) * Constants.initialRotation),
                 Math.abs(Constants.xChargePadOffset), Math.signum(Constants.xChargePadOffset) * -90,
-                Constants.yChargePadOffset, 3 };
-        final String[] commands = { "w", "r", "d", "r", "d", "d" };
+                Constants.yChargePadOffset, Constants.pushDistance, -Constants.pushDistance };
+        final String[] commands = { "w", "r", "d", "r", "d", "d", "d" };
         switch (Constants.calibrating) {
             case "d":
                 if (time <= Constants.caliseconds) {
