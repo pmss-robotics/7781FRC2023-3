@@ -1,6 +1,7 @@
 package frc.robot;
 
 public final class Constants {
+
     // Ports
     public static final int xboxControllerPort = 0;
 
@@ -27,11 +28,19 @@ public final class Constants {
     // meters travelled per second @ s = autoSpeed
     public static final double driveConstant = 0.5;
     public static final double autoSpeed = 0.5;
+    public static final double armLiftConstant = 90;
+    public static final double armExtendConstant = 90;
+    public static final double armLiftSpeed = 0.2;
+    public static final double armExtendSpeed = 0.2;
+
+    public static final double pushDistance = 3;
     public static String calibrating = "f"; // set to "d" for drive, "r" for rotate, anything else for regular
+
     // Robot configs
     public static final double driveSensitivity = 0.7;
-    public static final double armLiftSensitivity = 0.5;
+    public static final double armLiftSensitivity = 0.6;
     public static final double armExtendSensitivity = 1;
+    public static final double armLiftOffset = 0.0;
 
     public static final int caliseconds = 5;
     public static double initialRotation = 0; // degrees

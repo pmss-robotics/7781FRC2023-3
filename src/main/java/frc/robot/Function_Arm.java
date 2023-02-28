@@ -29,6 +29,7 @@ public class Function_Arm {
     DoubleSolenoid _rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,
             Constants.rightSolenoidForwardChannel, Constants.rightSolenoidReverseChannel);
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+    int c = 0;
 
     public void driveSetup() {
         compressor.enableDigital();
@@ -62,5 +63,44 @@ public class Function_Arm {
         Value solenoidValue = open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff);
         _leftSolenoid.set(solenoidValue);
         _rightSolenoid.set(solenoidValue);
+    }
+
+    public void armAutonomous(double time) {
+        final double[] command_values = {
+                Constants.offset,
+        };
+        final String[] commands = { "w" };
+        switch (Constants.calibrating) {
+            case "l":
+                if (time <= Constants.caliseconds) {
+                    _leftArmMotor.set(Constants.armLiftSpeed);
+                    _rightArmMotor.set(Constants.armLiftSpeed);
+                }
+                break;
+            case "e":
+                if (time <= Constants.caliseconds) {
+                    _extendMotor.set(Constants.armExtendSpeed);
+                }
+                break;
+            default:
+                double seconds = time;
+                double tsum = 0;
+                for (int i = 0; i < (c + 1); i++) {
+                    tsum += Math.abs(command_values[i]
+                            / ((commands[i] == "l") ? Constants.armLiftConstant
+                                    : ((commands[i] == "e") ? Constants.armExtendConstant : 1)));
+                }
+                if (seconds < tsum) {
+                    _leftArmMotor
+                            .set((commands[c] == "l") ? (Constants.armLiftSpeed * Math.signum(command_values[c])) : 0);
+                    _rightArmMotor
+                            .set((commands[c] == "l") ? (Constants.armLiftSpeed * Math.signum(command_values[c])) : 0);
+                    _extendMotor.set(
+                            (commands[c] == "e") ? (Constants.armExtendSpeed * Math.signum(command_values[c])) : 0);
+                } else if ((c + 1) < commands.length) {
+                    c++;
+                }
+                break;
+        }
     }
 }
