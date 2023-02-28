@@ -101,16 +101,19 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+
+		double gRightY = _gamepad.getRightTriggerAxis();
+		double gRightX = _gamepad.getLeftTriggerAxis();
+		double gLeftT = _gamepad.getRightX();
+		double gRightT = _gamepad.getRightY();
+
 		/*
-		 * double gRightY = _gamepad.getRightTriggerAxis();
-		 * double gRightX = _gamepad.getLeftTriggerAxis();
-		 * double gLeftT = _gamepad.getRightX();
-		 * double gRightT = _gamepad.getRightY();
+		 * double gRightY = _gamepad.getRightY();
+		 * double gRightX = _gamepad.getRightX();
+		 * double gLeftT = _gamepad.getLeftTriggerAxis();
+		 * double gRightT = _gamepad.getRightTriggerAxis();
 		 */
-		double gRightY = _gamepad.getRightY();
-		double gRightX = _gamepad.getRightX();
-		double gLeftT = _gamepad.getLeftTriggerAxis();
-		double gRightT = _gamepad.getRightTriggerAxis();
+
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
 		// EG. // trough servo
@@ -119,7 +122,7 @@ public class Robot extends TimedRobot {
 		// sensitivity control INVERTED ON LIANG'S CONTROLLER
 		// Jul 27 Alyn: ASK BOB WHY USE THIS FORMULA FOR SENSATIVITY
 		// double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
-		// Holding the "A" button on the remote will increase accel by 3 times!
+		// Holding the left trigger button on the remote will increase accel by 3 times!
 		double sensitivity = ((Deadband(gLeftT) > 0) ? 1 : Constants.driveSensitivity);
 
 		/*---- DRIVE ----*/
@@ -136,17 +139,19 @@ public class Robot extends TimedRobot {
 		leftright = Deadband(leftright);
 		leftright = sensitivity * leftright;
 
-		// Motor grab by tracking joystick position (bugged and corresponds to RT)
+		// Motor grab by tracking joystick position
 
 		int grab_intake = _gamepad.getLeftBumper() ? 1 : 0;
 		int grab_outtake = _gamepad.getRightBumper() ? 1 : 0;
 		int grab = grab_intake - grab_outtake;
 
-		// Motor grab by tracking joystick position (for whatever reason
-		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
-		// right y axis)
 		double lift = -gRightY + this.armLiftOffset;
-		System.out.println(gRightY);
+
+		System.out.println("Right Y: " + gRightY);
+		System.out.println("Right X: " + gRightX);
+		System.out.println("Left T: " + gLeftT);
+		System.out.println("Right T: " + gRightT);
+
 		lift = Deadband(lift);
 		lift = Constants.armLiftSensitivity * lift;
 		double open = Deadband(gRightT - 0.5) * sensitivity;
