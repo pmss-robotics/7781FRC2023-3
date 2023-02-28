@@ -102,17 +102,17 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		double gRightY = _gamepad.getRightTriggerAxis();
-		double gRightX = _gamepad.getLeftTriggerAxis();
-		double gLeftT = _gamepad.getRightX();
-		double gRightT = _gamepad.getRightY();
-
 		/*
-		 * double gRightY = _gamepad.getRightY();
-		 * double gRightX = _gamepad.getRightX();
-		 * double gLeftT = _gamepad.getLeftTriggerAxis();
-		 * double gRightT = _gamepad.getRightTriggerAxis();
+		 * double gRightY = _gamepad.getRightTriggerAxis();
+		 * double gRightX = _gamepad.getLeftTriggerAxis();
+		 * double gLeftT = _gamepad.getRightX();
+		 * double gRightT = _gamepad.getRightY();
 		 */
+
+		double gRightY = _gamepad.getRightY();
+		double gRightX = _gamepad.getRightX();
+		double gLeftT = _gamepad.getLeftTriggerAxis();
+		double gRightT = _gamepad.getRightTriggerAxis();
 
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
@@ -140,21 +140,25 @@ public class Robot extends TimedRobot {
 		leftright = sensitivity * leftright;
 
 		// Motor grab by tracking joystick position
-
+		// Motor system
 		int grab_intake = _gamepad.getLeftBumper() ? 1 : 0;
 		int grab_outtake = _gamepad.getRightBumper() ? 1 : 0;
 		int grab = grab_intake - grab_outtake;
 
+		// How much the arm goes up by
 		double lift = -gRightY + this.armLiftOffset;
 
+		// Testing: print
 		System.out.println("Right Y: " + gRightY);
 		System.out.println("Right X: " + gRightX);
 		System.out.println("Left T: " + gLeftT);
 		System.out.println("Right T: " + gRightT);
 
 		lift = Deadband(lift);
+		// sensitivity * lift
 		lift = Constants.armLiftSensitivity * lift;
 		double open = Deadband(gRightT - 0.5) * sensitivity;
+		// sensitivity * extend
 		double extend = -Deadband(gRightX) * Constants.armExtendSensitivity;
 
 		// TODO: Move to constants file
@@ -167,8 +171,10 @@ public class Robot extends TimedRobot {
 			// left bumper button to brake
 			driveTrain.driveBrake();
 		}
+		// Not needed
 		intake.grabToggle(_gamepad.getXButtonPressed());
 		intake.grabPeriodic(grab);
+		// offset
 		if (_gamepad.getRightBumperPressed()) {
 			if (this.armLiftOffset == Constants.armLiftOffset) {
 				this.armLiftOffset = 0;
