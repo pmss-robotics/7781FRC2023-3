@@ -146,6 +146,7 @@ public class Robot extends TimedRobot {
 		// getLeftTriggerAxis is a bit bugged and it corresponds to the controller's
 		// right y axis)
 		double lift = -gRightY + this.armLiftOffset;
+		System.out.println(gRightY);
 		lift = Deadband(lift);
 		lift = Constants.armLiftSensitivity * lift;
 		double open = Deadband(gRightT - 0.5) * sensitivity;

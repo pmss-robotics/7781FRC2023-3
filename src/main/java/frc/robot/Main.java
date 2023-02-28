@@ -27,8 +27,8 @@ public final class Main {
    */
 
   public static void main(String[] args) {
-    // PowerDistribution power = new PowerDistribution();
-    // power.clearStickyFaults();
+    PowerDistribution power = new PowerDistribution();
+    power.clearStickyFaults();
     RobotBase.startRobot(Robot::new);
   }
 

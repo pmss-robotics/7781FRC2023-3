@@ -39,7 +39,7 @@ public final class Constants {
 
     // Robot configs
     public static final double driveSensitivity = 0.7;
-    public static final double armLiftSensitivity = 0.6;
+    public static final double armLiftSensitivity = 0.3;
     public static final double armExtendSensitivity = 1;
     public static final double armLiftOffset = 0.0;
 
