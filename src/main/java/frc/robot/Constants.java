@@ -28,10 +28,11 @@ public final class Constants {
     // meters travelled per second @ s = autoSpeed
     public static final double driveConstant = 0.5;
     public static final double autoSpeed = 0.5;
-    public static final double armLiftConstant = 90;
-    public static final double armExtendConstant = 90;
+    public static final double armLiftConstant = 90; // deg/s
+    public static final double armExtendConstant = 0.5; // m/s
+    public static final double clawConstant = 1; // closings/s
     public static final double armLiftSpeed = 0.2;
-    public static final double armExtendSpeed = 0.2;
+    public static final double armExtendSpeed = 1;
 
     public static final double pushDistance = 3;
     public static String calibrating = "f"; // set to "d" for drive, "r" for rotate, anything else for regular

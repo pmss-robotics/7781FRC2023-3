@@ -67,9 +67,9 @@ public class Function_Arm {
 
     public void armAutonomous(double time) {
         final double[] command_values = {
-                Constants.offset,
+                Constants.offset, -90, 1, 90
         };
-        final String[] commands = { "w" };
+        final String[] commands = { "w", "l", "a", "l" };
         switch (Constants.calibrating) {
             case "l":
                 if (time <= Constants.caliseconds) {
@@ -88,7 +88,8 @@ public class Function_Arm {
                 for (int i = 0; i < (c + 1); i++) {
                     tsum += Math.abs(command_values[i]
                             / ((commands[i] == "l") ? Constants.armLiftConstant
-                                    : ((commands[i] == "e") ? Constants.armExtendConstant : 1)));
+                                    : ((commands[i] == "e") ? Constants.armExtendConstant
+                                            : ((commands[i] == "a") ? Constants.clawConstant : 1))));
                 }
                 if (seconds < tsum) {
                     _leftArmMotor
@@ -97,6 +98,10 @@ public class Function_Arm {
                             .set((commands[c] == "l") ? (Constants.armLiftSpeed * Math.signum(command_values[c])) : 0);
                     _extendMotor.set(
                             (commands[c] == "e") ? (Constants.armExtendSpeed * Math.signum(command_values[c])) : 0);
+                    _leftSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? Value.kForward
+                            : (command_values[c] < 0 ? Value.kReverse : Value.kOff)) : Value.kOff);
+                    _rightSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? Value.kForward
+                            : (command_values[c] < 0 ? Value.kReverse : Value.kOff)) : Value.kOff);
                 } else if ((c + 1) < commands.length) {
                     c++;
                 }
