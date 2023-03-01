@@ -101,18 +101,21 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-
-		/*
-		 * double gRightY = _gamepad.getRightTriggerAxis();
-		 * double gRightX = _gamepad.getLeftTriggerAxis();
-		 * double gLeftT = _gamepad.getRightX();
-		 * double gRightT = _gamepad.getRightY();
-		 */
-
+		// Can try to change if mapping is incorrect
+		boolean map_alt = false;
 		double gRightY = _gamepad.getRightY();
 		double gRightX = _gamepad.getRightX();
 		double gLeftT = _gamepad.getLeftTriggerAxis();
 		double gRightT = _gamepad.getRightTriggerAxis();
+		if (map_alt) {
+			gRightY = _gamepad.getRightTriggerAxis();
+			gRightX = _gamepad.getLeftTriggerAxis();
+			gLeftT = _gamepad.getRightX();
+			gRightT = _gamepad.getRightY();
+		}
+		/*
+		 * 
+		 */
 
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
@@ -147,17 +150,19 @@ public class Robot extends TimedRobot {
 
 		// How much the arm goes up by
 		double lift = -gRightY + this.armLiftOffset;
-
+		System.out.println("Right Y: " + Deadband(gRightY));
 		// Testing: print
-		System.out.println("Right Y: " + gRightY);
-		System.out.println("Right X: " + gRightX);
-		System.out.println("Left T: " + gLeftT);
-		System.out.println("Right T: " + gRightT);
+		/*
+		 * System.out.println("Right Y: " + Deadband(gRightY));
+		 * System.out.println("Right X: " + Deadband(gRightX));
+		 * System.out.println("Left T: " + Deadband(gLeftT));
+		 * System.out.println("Right T: " + Deadband(gRightT));
+		 */
 
 		lift = Deadband(lift);
 		// sensitivity * lift
 		lift = Constants.armLiftSensitivity * lift;
-		double open = Deadband(gRightT - 0.5) * sensitivity;
+		double open = gRightT - 0.5;
 		// sensitivity * extend
 		double extend = -Deadband(gRightX) * Constants.armExtendSensitivity;
 
