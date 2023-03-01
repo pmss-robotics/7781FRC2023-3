@@ -166,8 +166,6 @@ public class Robot extends TimedRobot {
 		// sensitivity * extend
 		double extend = -Deadband(gRightX) * Constants.armExtendSensitivity;
 
-		// TODO: Move to constants file
-
 		// Use driveCartesian (y, x, z) [NOT X, Y, Z] to control robot movement
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
 		if (!_gamepad.getLeftBumper()) {
