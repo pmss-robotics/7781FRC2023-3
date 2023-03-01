@@ -72,6 +72,13 @@ public class Robot extends TimedRobot {
 	XboxController _gamepad = new XboxController(Constants.xboxControllerPort);
 	int c = 0;
 	double armLiftOffset = Constants.armLiftOffset;
+	boolean mapAlt = false;
+
+	// controller key mapping
+	double gRightY = _gamepad.getRightY();
+	double gRightX = _gamepad.getRightX();
+	double gLeftT = _gamepad.getLeftTriggerAxis();
+	double gRightT = _gamepad.getRightTriggerAxis();
 
 	@Override
 	public void autonomousInit() {
@@ -88,8 +95,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		driveTrain.driveAutonomous(timer.get());
-		// Periodic functions run 50 times a seconds, following code just runs for 3
-		// secodns
+		// Periodic functions run 50 times a seconds, following code just runs for 3 seconds
 		// Alyn Jul 13, autonomous period, move forward 0.5. x is forward
 		// drivePeriodic(double ySpeed, double xSpeed, double grab)
 		// Feb 15 this is now its own function
@@ -101,21 +107,21 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		// Can try to change if mapping is incorrect
-		boolean map_alt = false;
-		double gRightY = _gamepad.getRightY();
-		double gRightX = _gamepad.getRightX();
-		double gLeftT = _gamepad.getLeftTriggerAxis();
-		double gRightT = _gamepad.getRightTriggerAxis();
-		if (map_alt) {
-			gRightY = _gamepad.getRightTriggerAxis();
-			gRightX = _gamepad.getLeftTriggerAxis();
-			gLeftT = _gamepad.getRightX();
-			gRightT = _gamepad.getRightY();
+
+		// toggle alt mapping
+		if (_gamepad.getBButtonPressed()) {
+			if (!mapAlt) {
+				gRightY = _gamepad.getRightTriggerAxis();
+				gRightX = _gamepad.getLeftTriggerAxis();
+				gLeftT = _gamepad.getRightX();
+				gRightT = _gamepad.getRightY();
+			} else {
+				gRightY = _gamepad.getRightY();
+				gRightX = _gamepad.getRightX();
+				gLeftT = _gamepad.getLeftTriggerAxis();
+				gRightT = _gamepad.getRightTriggerAxis();
+			}
 		}
-		/*
-		 * 
-		 */
 
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
@@ -151,7 +157,6 @@ public class Robot extends TimedRobot {
 		// How much the arm goes up by
 		double lift = -gRightY + this.armLiftOffset;
 		System.out.println("Right Y: " + Deadband(gRightY));
-		// Testing: print
 		/*
 		 * System.out.println("Right Y: " + Deadband(gRightY));
 		 * System.out.println("Right X: " + Deadband(gRightX));
@@ -174,9 +179,11 @@ public class Robot extends TimedRobot {
 			// left bumper button to brake
 			driveTrain.driveBrake();
 		}
+
 		// Not needed
 		intake.grabToggle(_gamepad.getXButtonPressed());
 		intake.grabPeriodic(grab);
+
 		// offset
 		if (_gamepad.getRightBumperPressed()) {
 			if (this.armLiftOffset == Constants.armLiftOffset) {
@@ -191,7 +198,7 @@ public class Robot extends TimedRobot {
 	/* UTILITY FUNCTIONS */
 	/**
 	 * Deadband 5 percent, used on the gamepad
-	 * Ignores any input thats less than 5% incase the controller is "drifting"
+	 * Ignores any input thats less than 5% incase the controller is slightly off
 	 */
 	double Deadband(double value) {
 		// inside deadband
