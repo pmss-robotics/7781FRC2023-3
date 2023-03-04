@@ -7,7 +7,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 //import edu.wpi.first.wpilibj.motorcontrol.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.apriltag.AprilTagDetector;
 //Alyn Jul 13, input Mecanum drive
 
@@ -42,7 +45,9 @@ public class Function_Drive {
     // Set ID for rear right motor as TalonSRX SPX 4
     WPI_TalonSRX _rearRightMotor = new WPI_TalonSRX(Constants.rearRightMotorPort);
     AprilTagDetector detector = new AprilTagDetector();
-
+    MotorControllerGroup _leftMotors = new MotorControllerGroup(_frontLeftMotor, _rearLeftMotor);
+    MotorControllerGroup _rightMotors = new MotorControllerGroup(_frontRightMotor, _rearRightMotor);
+    Gyro gyro = new AnalogGyro(0);
     // //attempted to fix
     // // Alyn Jul 13, define driveA.
     // // MUST CHANGE NUMBER ONCE IDed
@@ -78,9 +83,26 @@ public class Function_Drive {
         _frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
         _rearRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-
+        _frontLeftMotor.setNeutralMode(NeutralMode.Coast);
+        _frontRightMotor.setNeutralMode(NeutralMode.Coast);
+        _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
+        _rearRightMotor.setNeutralMode(NeutralMode.Coast);
         // Play around with this for setting breaks on raiser arm
 
+    }
+
+    public void brakeMotors(boolean brake) {
+        if (brake) {
+            _frontLeftMotor.setNeutralMode(NeutralMode.Brake);
+            _frontRightMotor.setNeutralMode(NeutralMode.Brake);
+            _rearLeftMotor.setNeutralMode(NeutralMode.Brake);
+            _rearRightMotor.setNeutralMode(NeutralMode.Brake);
+        } else {
+            _frontLeftMotor.setNeutralMode(NeutralMode.Coast);
+            _frontRightMotor.setNeutralMode(NeutralMode.Coast);
+            _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
+            _rearRightMotor.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     public void drivePeriodic(double xSpeed, double zRotation) {
@@ -90,63 +112,37 @@ public class Function_Drive {
         // _driveA.arcadeDrive(xSpeed, 4);
         // _driveA.tankDrive(ySpeed, 20);
         _driveA.arcadeDrive(xSpeed, zRotation, false);
-
-    }
-
-    public void driveBrake() {
-        _rearLeftMotor.setNeutralMode(NeutralMode.Coast);
-        _rearRightMotor.setNeutralMode(NeutralMode.Coast);
-        _frontLeftMotor.setNeutralMode(NeutralMode.Coast);
-        _frontRightMotor.setNeutralMode(NeutralMode.Coast);
-
     }
 
     public void driveAutonomous(double time) {
-        final double[] command_values = {
-                Constants.offset,
-                Math.signum(Constants.xChargePadOffset)
-                        * (90 + Math.signum(Constants.xChargePadOffset) * Constants.initialRotation),
-                Math.abs(Constants.xChargePadOffset), Math.signum(Constants.xChargePadOffset) * -90,
-                Constants.yChargePadOffset, Constants.pushDistance, -Constants.pushDistance };
-        final String[] commands = { "w", "r", "d", "r", "d", "d", "d" };
-        switch (Constants.calibrating) {
-            case "d":
-                if (time <= Constants.caliseconds) {
-                    _driveA.arcadeDrive(Constants.autoSpeed, 0);
-                }
-                break;
-            case "r":
-                if (time <= Constants.caliseconds) {
-                    _driveA.arcadeDrive(0, Constants.autoSpeed);
-                }
-                break;
-            default:
-                double seconds = time;
-                double tsum = 0;
-                for (int i = 0; i < (c + 1); i++) {
-                    tsum += Math.abs(command_values[i]
-                            / ((commands[i] == "r") ? Constants.rotationConstant
-                                    : ((commands[i] == "d") ? Constants.driveConstant : 1)));
-                }
-                if (seconds < tsum) {
-                    _driveA.arcadeDrive((commands[c] == "d" ? (0.5 * Math.signum(command_values[c])) : 0),
-                            (commands[c] == "r" ? (0.5 * Math.signum(command_values[c])) : 0));
-                } else if ((c + 1) < commands.length) {
-                    c++;
-                }
-                break;
+        if (time < 3) {
+            _driveA.arcadeDrive(1, 0);
+        } else {
+            while (Math.abs(gyro.getAngle()) > 1) {
+                _driveA.arcadeDrive(-gyro.getAngle() / 180 * 2, 0);
+            }
         }
         /*
-         * {
-         * 
-         * // Constants.xChargePadOffset - how far right the robot is from the charge
-         * pad
-         * // (negative means it is to the left)
-         * // Constants.yChargePadOffset - how far back the robot is from the charge pad
-         * // Constants.initialRotation - angle offset from north in degrees (west =
-         * // negative, east =
-         * // positive)
-         * // time - the current tick number (use seconds for # of seconds)
+         * final double[] command_values = {
+         * Constants.offset,
+         * Math.signum(Constants.xChargePadOffset)
+         * (90 + Math.signum(Constants.xChargePadOffset) * Constants.initialRotation),
+         * Math.abs(Constants.xChargePadOffset), Math.signum(Constants.xChargePadOffset)
+         * * -90,
+         * Constants.yChargePadOffset };
+         * final String[] commands = { "w", "w", "w", "w", "r", "d", "r", "d" };
+         * switch (Constants.calibrating) {
+         * case "d":
+         * if (time <= Constants.caliseconds) {
+         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * }
+         * break;
+         * case "r":
+         * if (time <= Constants.caliseconds) {
+         * _driveA.arcadeDrive(0, Constants.autoSpeed);
+         * }
+         * break;
+         * default:
          * double seconds = time;
          * double tsum = 0;
          * for (int i = 0; i < (c + 1); i++) {
@@ -155,80 +151,16 @@ public class Function_Drive {
          * : ((commands[i] == "d") ? Constants.driveConstant : 1)));
          * }
          * if (seconds < tsum) {
-         * _driveA.arcadeDrive((commands[c] == "d" ? (0.5 *
-         * Math.signum(command_values[c])) : 0),
-         * (commands[c] == "r" ? (0.5 * Math.signum(command_values[c])) : 0));
+         * _driveA.arcadeDrive(
+         * (commands[c] == "d" ? (Constants.autoSpeed * Math.signum(command_values[c]))
+         * : 0),
+         * (commands[c] == "r" ? (Constants.autoSpeed * Math.signum(command_values[c]))
+         * : 0));
          * } else if ((c + 1) < commands.length) {
          * c++;
          * }
-         * /*
-         * if (Constants.xChargePadOffset < 0) {
-         * // all of these variables are in terms of seconds
-         * // r variables are Constants.initialRotation actions, d variables are drive
-         * 
-         * final double r1 = (90 - Constants.initialRotation) /
-         * Constants.rotationConstant;
-         * final double d2 = Math.abs(Constants.xChargePadOffset) /
-         * Constants.driveConstant;
-         * final double r3 = 90 / Constants.rotationConstant;
-         * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
-         * 
-         * 
-         * 
-         * 
-         * if (seconds < r1) {
-         * _driveA.arcadeDrive(0, Constants.autoSpeed);
-         * } else if (seconds < r1 + d2) {
-         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-         * } else if (seconds < r1 + d2 + r3) {
-         * _driveA.arcadeDrive(0, -Constants.autoSpeed);
-         * } else if (seconds < r1 + d2 + r3 + d4) {
-         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
+         * break;
          * }
-         * 
-         * }
-         * else if (Constants.xChargePadOffset > 0) {
-         * // all of these variables are in terms of seconds
-         * // r variables are Constants.initialRotation actions, d variables are drive
-         * final double r1 = (90 + Constants.initialRotation) /
-         * Constants.rotationConstant;
-         * final double d2 = Math.abs(Constants.xChargePadOffset) /
-         * Constants.driveConstant;
-         * final double r3 = 90 / Constants.rotationConstant;
-         * final double d4 = Constants.yChargePadOffset / Constants.driveConstant;
-         * if (seconds < r1) {
-         * _driveA.arcadeDrive(0, -Constants.autoSpeed);
-         * } else if (seconds < r1 + d2) {
-         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-         * } else if (seconds < r1 + d2 + r3) {
-         * _driveA.arcadeDrive(0, Constants.autoSpeed);
-         * } else if (seconds < r1 + d2 + r3 + d4) {
-         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-         * }
-         * } else {
-         * final double d1 = Constants.yChargePadOffset / Constants.driveConstant;
-         * if (seconds < d1) {
-         * _driveA.arcadeDrive(Constants.autoSpeed, 0);
-         * }
-         * }
-         * 
-         * }
-         */
-        /*
-         * If you want to do limelight
-         * NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-         * NetworkTableEntry tx = table.getEntry("tx");
-         * NetworkTableEntry ty = table.getEntry("ty");
-         * NetworkTableEntry ta = table.getEntry("ta");
-         * // read values periodically
-         * double x = tx.getDouble(0.0);
-         * double y = ty.getDouble(0.0);
-         * double area = ta.getDouble(0.0);
-         * 
-         * // post to smart dashboard periodically
-         * SmartDashboard.putNumber("LimelightX", x);
-         * SmartDashboard.putNumber("LimelightY", y);
-         * SmartDashboard.putNumber("LimelightArea", area);
          */
     }
 }

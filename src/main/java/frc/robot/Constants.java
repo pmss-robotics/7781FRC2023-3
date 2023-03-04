@@ -7,8 +7,8 @@ public final class Constants {
 
     public static final int frontLeftMotorPort = 2;
     public static final int frontRightMotorPort = 3;
-    public static final int rearLeftMotorPort = 1;
-    public static final int rearRightMotorPort = 4;
+    public static final int rearLeftMotorPort = 4;
+    public static final int rearRightMotorPort = 1;
 
     public static final int _leftIntakeMotorPort = 12;
     public static final int _rightIntakeMotorPort = 13;
@@ -23,30 +23,28 @@ public final class Constants {
     public static final int rightSolenoidReverseChannel = 3;
 
     // Autonomous
-    // degrees travelled per second @ s = autoSpeed
-    public static final double rotationConstant = 90;
-    // meters travelled per second @ s = autoSpeed
-    public static final double driveConstant = 0.5;
-    public static final double autoSpeed = 0.5;
-    public static final double armLiftConstant = 90; // deg/s
-    public static final double armExtendConstant = 0.5; // m/s
+    public static final double rotationConstant = 90; // deg/sec @ s = autoSpeed
+    public static final double driveConstant = 3; // ft/sec @ s = autoSpeed
+    public static final double autoSpeed = 1;
+    public static final double armLiftConstant = 90; // deg/sec
+    public static final double armExtendConstant = 0.5; // ft/sec
     public static final double clawConstant = 1; // closings/s
-    public static final double armLiftSpeed = 0.2;
+    public static final double armLiftSpeed = 0.4;
     public static final double armExtendSpeed = 1;
 
     public static final double pushDistance = 3;
     public static String calibrating = "f"; // set to "d" for drive, "r" for rotate, anything else for regular
 
     // Robot configs
-    public static final double driveSensitivity = 0.7;
-    public static final double armLiftSensitivity = 0.3;
+    public static final double driveSensitivity = 1;
+    public static final double armLiftSensitivity = 1;
     public static final double armExtendSensitivity = 1;
     public static final double armLiftOffset = 0.0;
 
     public static final int caliseconds = 5;
     public static double initialRotation = 0; // degrees
-    public static double xChargePadOffset = -1; // meters
-    public static double yChargePadOffset = 1; // meters
+    public static double xChargePadOffset = 0; // feet
+    public static double yChargePadOffset = 3.5; // feet
     public static final double offset = 0; // how many seconds after the start should autonomous begin?
 
 }

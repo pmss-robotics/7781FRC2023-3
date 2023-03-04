@@ -53,6 +53,7 @@ package frc.robot;
 
 import static java.lang.Math.abs;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot; //import timed robot
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Timer;
@@ -70,8 +71,9 @@ public class Robot extends TimedRobot {
 	Function_Arm arm = new Function_Arm();
 	Timer timer = new Timer();
 	XboxController _gamepad = new XboxController(Constants.xboxControllerPort);
-	int c = 0;
-	double armLiftOffset = Constants.armLiftOffset;
+	Joystick _joystick = new Joystick(0);
+	int invert_x = -1;
+	int invert_y = -1;
 
 	@Override
 	public void autonomousInit() {
@@ -87,6 +89,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		// arm.armAutonomous(timer.get());
 		driveTrain.driveAutonomous(timer.get());
 		// Periodic functions run 50 times a seconds, following code just runs for 3
 		// secodns
@@ -102,21 +105,17 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		// Can try to change if mapping is incorrect
-		boolean map_alt = false;
+
 		double gRightY = _gamepad.getRightY();
 		double gRightX = _gamepad.getRightX();
-		double gLeftT = _gamepad.getLeftTriggerAxis();
-		double gRightT = _gamepad.getRightTriggerAxis();
-		if (map_alt) {
-			gRightY = _gamepad.getRightTriggerAxis();
-			gRightX = _gamepad.getLeftTriggerAxis();
-			gLeftT = _gamepad.getRightX();
-			gRightT = _gamepad.getRightY();
+		double gRightX2 = _joystick.getRawAxis(2);
+		double gRightY2 = _joystick.getRawAxis(3);
+		if (_joystick.getRawButtonPressed(0)) {
+			invert_x = -invert_x;
 		}
-		/*
-		 * 
-		 */
-
+		if (_joystick.getRawButtonPressed(3)) {
+			invert_y = -invert_y;
+		}
 		/*---- GAMEPAD ----*/
 		// Jul 27: ONCE CHALLENGE ANNOUNCED, ADD CODE TO EACH BUTTON
 		// EG. // trough servo
@@ -126,31 +125,28 @@ public class Robot extends TimedRobot {
 		// Jul 27 Alyn: ASK BOB WHY USE THIS FORMULA FOR SENSATIVITY
 		// double sensitivity = 1-( _gamepad.getThrottle() + 1)/2;
 		// Holding the left trigger button on the remote will increase accel by 3 times!
-		double sensitivity = ((Deadband(gLeftT) > 0) ? 1 : Constants.driveSensitivity);
 
 		/*---- DRIVE ----*/
 		// Going forwards and backwards by tracking joystick position
 
-		double backforth = 1 * _gamepad.getLeftY();
+		double backforth = invert_y * gRightY2;
 		// Using deadband so minor joystick movements will not pass through and move the
 		// robot
 		backforth = Deadband(backforth);
-		backforth = sensitivity * backforth;
 
 		// Going left and right by tracking joystick position
-		double leftright = 1 * _gamepad.getLeftX();
+		double leftright = invert_x * gRightX2;
 		leftright = Deadband(leftright);
-		leftright = sensitivity * leftright;
-
+		driveTrain.brakeMotors(_gamepad.getBButton());
 		// Motor grab by tracking joystick position
 		// Motor system
-		int grab_intake = _gamepad.getLeftBumper() ? 1 : 0;
-		int grab_outtake = _gamepad.getRightBumper() ? 1 : 0;
-		int grab = grab_intake - grab_outtake;
+		// int grab_intake = _gamepad.getLeftBumper() ? 1 : 0;
+		// int grab_outtake = _gamepad.getRightBumper() ? 1 : 0;
+		// int grab = grab_intake - grab_outtake;
 
 		// How much the arm goes up by
-		double lift = -gRightY + this.armLiftOffset;
-		System.out.println("Right Y: " + Deadband(gRightY));
+		// double lift = -gRightY + this.armLiftOffset;
+		// System.out.println("Right Y: " + Deadband(gRightY));
 		// Testing: print
 		/*
 		 * System.out.println("Right Y: " + Deadband(gRightY));
@@ -159,35 +155,24 @@ public class Robot extends TimedRobot {
 		 * System.out.println("Right T: " + Deadband(gRightT));
 		 */
 
-		lift = Deadband(lift);
+		// lift = Deadband(lift);
 		// sensitivity * lift
-		lift = Constants.armLiftSensitivity * lift;
-		double open = gRightT - 0.5;
+		// lift = Constants.armLiftSensitivity * lift;
 		// sensitivity * extend
-		double extend = -Deadband(gRightX) * Constants.armExtendSensitivity;
+		// double extend = -Deadband(gRightX) * Constants.armExtendSensitivity;
 
 		// TODO: Move to constants file
 
 		// Use driveCartesian (y, x, z) [NOT X, Y, Z] to control robot movement
 		// Feb. 14 - Uses arcadeDrive (x, r) to control robot movement
-		if (!_gamepad.getLeftBumper()) {
-			driveTrain.drivePeriodic(backforth, leftright);
-		} else {
-			// left bumper button to brake
-			driveTrain.driveBrake();
-		}
+
+		driveTrain.drivePeriodic(backforth, leftright);
+
 		// Not needed
-		intake.grabToggle(_gamepad.getXButtonPressed());
-		intake.grabPeriodic(grab);
+		// intake.grabToggle(_gamepad.getXButtonPressed());
+		// intake.grabPeriodic(grab);
 		// offset
-		if (_gamepad.getRightBumperPressed()) {
-			if (this.armLiftOffset == Constants.armLiftOffset) {
-				this.armLiftOffset = 0;
-			} else {
-				this.armLiftOffset = Constants.armLiftOffset;
-			}
-		}
-		arm.liftPeriodic(lift, extend, open);
+		// arm.liftPeriodic(lift, extend, open);
 	}
 
 	/* UTILITY FUNCTIONS */

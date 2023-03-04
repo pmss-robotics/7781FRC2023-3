@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Compressor;
@@ -30,17 +31,21 @@ public class Function_Arm {
             Constants.rightSolenoidForwardChannel, Constants.rightSolenoidReverseChannel);
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
     int c = 0;
+    Value close = Value.kReverse;
+    Value open = Value.kForward;
 
     public void driveSetup() {
-        compressor.enableDigital();
+        // compressor.enableDigital();
 
         /* Set Neutral mode */
         _leftArmMotor.stopMotor();
         _leftArmMotor.setInverted(false);
         _rightArmMotor.stopMotor();
-        _rightArmMotor.setInverted(false);
+        _rightArmMotor.setInverted(true);
         _extendMotor.stopMotor();
         _extendMotor.setInverted(false);
+        _leftArmMotor.setNeutralMode(NeutralMode.Brake);
+        _rightArmMotor.setNeutralMode(NeutralMode.Brake);
 
         _leftSolenoid.set(Value.kOff);
         _rightSolenoid.set(Value.kOff);
@@ -51,25 +56,25 @@ public class Function_Arm {
      * lift: Positive values move arm up, negative vice versa
      * extend: Positive values bring the arm out, negatice vice versa
      */
-    public void liftPeriodic(double lift, double extend, double open) {
+    public void liftPeriodic(double lift, double extend, double opening) {
         // Alyn Jul 13, changed parameters of drivePeriodic to fit Mecanum
         // driveCartesian
-        _leftArmMotor.set(lift);
-        _rightArmMotor.set(lift);
-        _extendMotor.set(extend);
+        _leftArmMotor.set(Math.max(lift, -0.1));
+        _rightArmMotor.set(Math.max(lift, -0.1));
+        // _extendMotor.set(extend);
         // Needs explanation
         // if open is positive, then solenoids push
         // if open is negative, then solenoids retract
-        Value solenoidValue = open > 0 ? Value.kForward : (open < 0 ? Value.kReverse : Value.kOff);
+        Value solenoidValue = opening > 0 ? open : (opening < 0 ? close : Value.kOff);
         _leftSolenoid.set(solenoidValue);
-        _rightSolenoid.set(solenoidValue);
+        // _rightSolenoid.set(solenoidValue);
     }
 
     public void armAutonomous(double time) {
         final double[] command_values = {
-                Constants.offset, -90, 1, 90
+                /* Constants.offset, -90, 1, 90, 100000000 */
         };
-        final String[] commands = { "w", "l", "a", "l" };
+        final String[] commands = { /* "w", "l", "a", "l", "w" */ };
         switch (Constants.calibrating) {
             case "l":
                 if (time <= Constants.caliseconds) {
@@ -98,10 +103,10 @@ public class Function_Arm {
                             .set((commands[c] == "l") ? (Constants.armLiftSpeed * Math.signum(command_values[c])) : 0);
                     _extendMotor.set(
                             (commands[c] == "e") ? (Constants.armExtendSpeed * Math.signum(command_values[c])) : 0);
-                    _leftSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? Value.kForward
-                            : (command_values[c] < 0 ? Value.kReverse : Value.kOff)) : Value.kOff);
-                    _rightSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? Value.kForward
-                            : (command_values[c] < 0 ? Value.kReverse : Value.kOff)) : Value.kOff);
+                    _leftSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? open
+                            : close) : Value.kOff);
+                    _rightSolenoid.set((commands[c] == "a") ? (command_values[c] > 0 ? open
+                            : close) : Value.kOff);
                 } else if ((c + 1) < commands.length) {
                     c++;
                 }
